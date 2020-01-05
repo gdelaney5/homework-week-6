@@ -1,19 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Weather Dashboard</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+
 
 </head>
+
 <body>
     <nav class="navbar navbar-dark bg-dark">
-        <span class="navbar-brand mb-0 h1" style="font-weight: bold; font-size: 32pt;">Weather Dashboard</span>
+        <span class="navbar-brand mb-0 h1" style="font-weight: bold; font-size: 30pt;">Weather Dashboard</span>
     </nav>
 
-    <div class="container" style = "padding-top: 15pt;">
+    <div class="container" style="padding-top: 15pt;">
 
         <div class="row">
 
@@ -22,9 +27,11 @@
                     Search for a City
                 </div>
                 <div class="input-group mb-3">
-                    <input type="text" class="form-control" placeholder="City Search" aria-label="City Search" aria-describedby="button-addon2">
+                    <input id="city-input" type="text" class="form-control" placeholder="City Search"
+                        aria-label="City Search" aria-describedby="button-addon2">
                     <div class="input-group-append">
-                      <button class="btn btn-outline-secondary" type="button" id="button-addon2">Search</button>
+                        <button id="city-search" class="btn btn-outline-secondary" type="button"
+                            id="button-addon2">Search</button>
                     </div>
                 </div>
 
@@ -38,20 +45,93 @@
 
                 <div class="card">
                     <div class="card-header">
-                    
+
                     </div>
-                    <div class="card-body">
-                      
+                    <div id="weather-display" class="card-body">
+                        <div id="city-name"></div>
+                        <div id="current-date"></div>
+                        <div id="icon-image"></div>
+                        <div id="current-temp"></div>
+                        <div id="current-hum"></div>
+                        <div id="current-wind"></div>
+                        <div id="current-uv"></div>
                     </div>
+
+                    <div class="card-header">
+                        5 Day Forecaset
+                    </div>
+                    <div id="fiveDayForecast" class="card-body">
+                        <div class ="row">
+                            <div id ="day-1" class="col-sm-2"></div>
+                            <div id ="day-2" class="col-sm-2"></div>
+                            <div id ="day-3" class="col-sm-2"></div>
+                            <div id ="day-4" class="col-sm-2"></div>
+                            <div id ="day-5" class="col-sm-2"></div>
+                        </div>
+
+                    </div>
+
                 </div>
 
             </div>
         </div>
-        
+
 
 
     </div>
 
-    
+    <script src="https://code.jquery.com/jquery.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0/js/bootstrap.bundle.min.js"></script>
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $("#city-search").on("click", function () {
+
+                var city = $("#city-input").val().trim();
+                var APIkey = "9f1a2689b9782328c7f5d7e5832b76ee";
+                var d = new Date();
+                var today = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
+                var queryURL = "http://api.openweathermap.org/data/2.5/weather?" + "q=" + city + "&appid=" + APIkey;
+
+                $.ajax({
+                    url: queryURL,
+                    method: "GET"
+                }).then(function (response) {
+                    console.log(queryURL);
+                    console.log(response);
+
+                    $("#city-name").html("<h1>" + response.name + " Weather Details</h1>");
+                    $("#current-date").text("Date: " + today);
+                    $("#icon-image").text(response.weather.icon);
+                    $("#current-temp").text("Temperature (F): " + ((response.main.temp * (9 / 5)) - 459.67))
+                    $("#current-hum").text("Humidity: " + response.main.humidity);
+                    $("#current-wind").text("Wind Speed: " + response.wind.speed);
+
+
+                });
+
+            });
+
+            $("#city-search").on("click", function () {
+
+                var city = $("#city-input").val().trim();
+                var APIkey = "9f1a2689b9782328c7f5d7e5832b76ee";
+                var queryURL = "http://api.openweathermap.org/data/2.5/forecast?" + "q=" + city + "&appid=" + APIkey;
+
+                $.ajax({
+                    url: queryURL,
+                    method: "GET"
+                }).then(function (response) {
+                    console.log(queryURL);
+                    console.log(response);                    
+                });
+
+            });
+
+        });
+
+    </script>
+
 </body>
+
 </html>
