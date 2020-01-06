@@ -35,9 +35,7 @@
                     </div>
                 </div>
 
-                <div class="container">
-
-
+                <div id="saved-city" class="container">
                 </div>
             </div>
 
@@ -61,12 +59,12 @@
                         5 Day Forecaset
                     </div>
                     <div id="fiveDayForecast" class="card-body">
-                        <div class ="row">
-                            <div id ="day-1" class="col-sm-2"></div>
-                            <div id ="day-2" class="col-sm-2"></div>
-                            <div id ="day-3" class="col-sm-2"></div>
-                            <div id ="day-4" class="col-sm-2"></div>
-                            <div id ="day-5" class="col-sm-2"></div>
+                        <div class="row">
+                            <div id="day-1" class="col-sm-2" style="background-color: lightskyblue"></div>
+                            <div id="day-2" class="col-sm-2" style="background-color: lightskyblue"></div>
+                            <div id="day-3" class="col-sm-2" style="background-color: lightskyblue"></div>
+                            <div id="day-4" class="col-sm-2" style="background-color: lightskyblue"></div>
+                            <div id="day-5" class="col-sm-2" style="background-color: lightskyblue"></div>
                         </div>
 
                     </div>
@@ -84,13 +82,15 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0/js/bootstrap.bundle.min.js"></script>
     <script type="text/javascript">
 
+
+
         $(document).ready(function () {
             $("#city-search").on("click", function () {
 
                 var city = $("#city-input").val().trim();
                 var APIkey = "9f1a2689b9782328c7f5d7e5832b76ee";
-                var d = new Date();
-                var today = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
+                var today = new Date();
+                document.getElementById("current-date").innerHTML = today.toLocaleDateString();
                 var queryURL = "http://api.openweathermap.org/data/2.5/weather?" + "q=" + city + "&appid=" + APIkey;
 
                 $.ajax({
@@ -103,14 +103,32 @@
                     $("#city-name").html("<h1>" + response.name + " Weather Details</h1>");
                     $("#current-date").text("Date: " + today);
                     $("#icon-image").text(response.weather.icon);
-                    $("#current-temp").text("Temperature (F): " + ((response.main.temp * (9 / 5)) - 459.67))
+                    $("#current-temp").text("Temperature (F): " + (Math.round(response.main.temp * (9 / 5)) - 459.67).toFixed(2) + "°F");
                     $("#current-hum").text("Humidity: " + response.main.humidity);
                     $("#current-wind").text("Wind Speed: " + response.wind.speed);
 
+                    $("#city-search").on("click", function () {
 
+                        var city = $("#city-input").val().trim();
+                        var APIkey = "9f1a2689b9782328c7f5d7e5832b76ee";
+                        var lon = $("#city-input").val(response.coord, lon);
+                        var lat = $("#city-input").val(response.coord, lat);
+                        var queryURL = "http://api.openweathermap.org/data/2.5/uvi?" + "lat=" + lat + "lon=" + lon + "&appid=" + APIkey;
+
+                        $.ajax({
+                            url: queryURL,
+                            method: "GET"
+                        }).then(function (response) {
+                            console.log(queryURL);
+                            console.log(response);
+                        });
+
+                    });
                 });
 
             });
+
+
 
             $("#city-search").on("click", function () {
 
@@ -121,14 +139,120 @@
                 $.ajax({
                     url: queryURL,
                     method: "GET"
-                }).then(function (response) {
+                }).then(function (future) {
                     console.log(queryURL);
-                    console.log(response);                    
+                    console.log(future);
+
+                    var firstDay = future.list[8].dt_txt;
+                    var firstTitle = $("<h6>").text(firstDay);
+                    var firstTemp = future.list[8].main.temp;
+                    var firstP1 = $("<p>").text("Temp: " + (Math.round(firstTemp * (9 / 5)) - 459.67).toFixed(2) + "°F");
+                    var firstHumidity = future.list[8].main.humidity;
+                    var firstP2 = $("<p>").text("Humidity: " + firstHumidity + "%");
+                    $("#day-1").prepend(firstTitle, firstP1, firstP2);
+
+                    var secondDay = future.list[16].dt_txt;
+                    var secondTitle = $("<h6>").text(secondDay);
+                    var secondTemp = future.list[16].main.temp;
+                    var secondP1 = $("<p>").text("Temp: " + (Math.round(secondTemp * (9 / 5)) - 459.67).toFixed(2) + "°F");
+                    var secondHumidity = future.list[16].main.humidity;
+                    var secondP2 = $("<p>").text("Humdity: " + secondHumidity + "%");
+                    $("#day-2").prepend(secondTitle, secondP1, secondP2);
+
+                    var thirdDay = future.list[24].dt_txt;
+                    var thirdTitle = $("<h6>").text(thirdDay);
+                    var thirdTemp = future.list[24].main.temp;
+                    var thirdP1 = $("<p>").text("Temp: " + (Math.round(thirdTemp * (9 / 5)) - 459.67).toFixed(2) + "°F");
+                    var thirdHumidity = future.list[24].main.humidity;
+                    var thirdP2 = $("<p>").text("Humdity: " + thirdHumidity + "%");
+                    $("#day-3").prepend(thirdTitle, thirdP1, thirdP2);
+
+                    var fourthDay = future.list[32].dt_txt;
+                    var fourthTitle = $("<h6>").text(fourthDay);
+                    var fourthTemp = future.list[32].main.temp;
+                    var fourthP1 = $("<p>").text("Temp: " + (Math.round(fourthTemp * (9 / 5)) - 459.67).toFixed(2) + "°F");
+                    var fourthHumidity = future.list[32].main.humidity;
+                    var fourthP2 = $("<p>").text("Humdity: " + fourthHumidity + "%");
+                    $("#day-4").prepend(fourthTitle, fourthP1, fourthP2);
+
+                    var fifthDay = future.list[39].dt_txt;
+                    var fifthTitle = $("<h6>").text(fifthDay);
+                    var fifthTemp = future.list[39].main.temp;
+                    var fifthP1 = $("<p>").text("Temp: " + (Math.round(fifthTemp * (9 / 5)) - 459.67).toFixed(2) + "°F");
+                    var fifthHumidity = future.list[39].main.humidity;
+                    var fifthP2 = $("<p>").text("Humidity: " + fifthHumidity + "%");
+                    $("#day-5").prepend(fifthTitle, fifthP1, fifthP2);
+
                 });
 
             });
 
+
+            var storedObjects = [];
+            var inputArrays = $("input");
+
+            $("#city-search").on("click", function () {
+
+                var userInput = $(this).parent().parent().children('input').val()
+
+                localSave(userInput)
+
+            });
+
+            function localSave(userInput) {
+
+                var cityObject = { task: userInput };
+
+                var count = 0
+
+                if (localStorage.getItem('user tasks') === null) {
+                    storedObjects.push(cityObject);
+                    localStorage.setItem('user tasks', JSON.stringify(storedObjects))
+                }
+
+
+                else {
+
+                    var retrievedArray = JSON.parse(localStorage.getItem('user tasks'));
+
+                    for (i = 0; i < retrievedArray.length; i++) {
+
+                        if (retrievedArray[i].task === cityObject.task) {
+                            count += 1
+                            retrievedArray[i].task = cityObject.task
+                        }
+                    }
+
+                    if (count === 0) {
+                        retrievedArray.push(cityObject)
+                    }
+
+                    localStorage.setItem('user tasks', JSON.stringify(retrievedArray))
+
+                }
+            };
+
+            function renderItem() {
+                var retrieveStoredArray = JSON.parse(localStorage.getItem('user tasks'));
+
+                for (i = 0; i < inputArrays.length; i++) {
+
+                    var fieldInput = inputArrays[i];
+                    var cityInput = $(fieldInput).attr('data');
+
+                    for (y = 0; y < retrieveStoredArray.length; y++) {
+                        var cityInsert = retrieveStoredArray[y].task;
+                        if (cityInsert === cityInput) {
+                            $(fieldInput).val(retrieveStoredArray[y].task)
+                        }
+                        else { }
+                    }
+                }
+                $("#saved-city").append(fieldInput);
+            };
+
         });
+
 
     </script>
 
